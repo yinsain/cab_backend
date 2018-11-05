@@ -2,3 +2,4 @@
 *.pyd
 *.pyo
 cab_backend/
+venv_cab/
