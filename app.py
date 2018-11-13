@@ -25,6 +25,7 @@ class UserCreds(db.Model):
     uid = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
     name = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(50), nullable=False)
+    otp = db.Column(db.String(10), nullable=False)
 
     def __repr__(self):
         return f"UserCreds('{self.uid}', '{self.name}', '{self.password}')"
@@ -44,26 +45,31 @@ def register():
     if request.method == 'POST':
         for k, x in request.headers.items():
             print(k, ':', x)
-        if request.headers['Content-type'] == 'application/json;':
+        if request.headers['Content-type'] == 'application/json':
             x = request.get_json()
             print(x)
             a = UsersMeta(email=x['user-mail'], phone=x['user-mob'], \
             name=x['user-name'])
             db.session.add(a)
-            b = UserCreds(uid=a.uid, name=x['user-mail'], password=x['user-pass'])
+            code = otp_send(x['user-mail'])
+            b = UserCreds(uid=a.uid, name=x['user-mail'], password=x['user-pass'], otp=code)
             db.session.add(b)
             db.session.commit()
             return jsonify({'status':'success'})
         return jsonify({'status':'error'})
 
-@app.route('/getverify', methods = ['POST'])
-def gencode():
+@app.route('/verify', methods = ['POST'])
+def verifycode():
     if request.method == 'POST':
         if request.headers['Content-type'] == 'application/json':
             x = request.get_json()
             email = x['user-mail']
-            code = otp_send(email)
-            return jsonify({'status':'otp-sent', 'code':code})
+            code = x['otp']
+            res = UserCreds.query.filter_by(name=x['user-mail']).first()
+            if res.name == email and res.otp == code:
+                return jsonify({'status':'otp-correct'})
+            else:
+                return jsonify({'status':'otp-wrong'})
 
 @app.route('/login', methods = ['POST'])
 def login():
@@ -107,5 +113,6 @@ def profile():
         return jsonify({'status':'profile-failed'})
 
 if __name__ == '__main__':
+    db.drop_all()
     db.create_all()
-    app.run(debug=True)
+    app.run(debug=False, host='10.2.135.67')
