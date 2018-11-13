@@ -194,8 +194,8 @@ def find_ride():
             rdate=dobj
             hour=int(x['hour'])
             res =  RidesMeta.query.filter(
-            src.startswith(x['source']),
-            dest.startswith(x['dest']),
+            RidesMeta.src.startswith(x['source']),
+            RidesMeta.dest.startswith(x['dest']),
             ).all()
             for x in res:
                 print('TESTING===', x.rid)
