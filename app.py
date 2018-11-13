@@ -131,13 +131,8 @@ def login():
 @is_logged_in
 def logout():
     if request.method == 'POST':
-        if request.headers['Content-type'] == 'application/json':
-            x = request.get_json()
-            print(x['user'])
-            session.pop('name')
-            session.pop('uid')
-            session.pop('logged_in')
-        return 'LO'
+        session.clear()
+        return jsonify({'status':'logout-success'})
 
 @app.route('/profile', methods = ['GET'])
 @is_logged_in
@@ -234,7 +229,7 @@ def offered_ride():
     else:
         return jsonify({'rides' : 'no-rides'})
 
-@app.route('/subscribe', methods= ['POST'])
+@app.route('/subscribe', methods = ['POST'])
 def subscribe():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
@@ -245,6 +240,30 @@ def subscribe():
             return jsonify({'subscribe' : 'added'})
         else:
             return jsonify({'subscribe' : 'failed'})
+
+@app.route('/notifications', methods = ['POST'])
+def notifiy():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            rides_list = list()
+            slist = Subscriptions.query.filter_by(uid=1)
+            for sx in slist:
+                res = RidesGiven.query.filter_by(uid=sx.pid)
+                for x in res:
+                    print('TESTING===', x.rid)
+                    rm =  RidesMeta.query.filter_by(rid=x.rid).first()
+                    rides_list.append({
+                    'rid' : rm.rid,
+                    'source' : rm.src,
+                    'dest' : rm.dest,
+                    'date' : rm.rdate,
+                    'seats' : rm.seats,
+                    'price' : rm.price,
+                    'hour' : rm.hour
+                    })
+            return jsonify({'rides' : rides_list})
+        else:
+            return jsonify({'rides' : 'nothing-new'})
 
 if __name__ == '__main__':
     #db.drop_all()

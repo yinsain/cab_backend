@@ -1,52 +1,90 @@
 PRAGMA foreign_keys=OFF;
-
-drop table if exists users_login;
-drop table if exists users_meta;
-drop table if exists rider;
-drop table if exists ride_meta;
-drop table if exists traveller;
-
 BEGIN TRANSACTION;
-
-CREATE TABLE users_login(
-uid integer not null unique primary key,
-name text not null unique,
-password text not null
+CREATE TABLE users_meta (
+	uid INTEGER NOT NULL, 
+	email VARCHAR(50) NOT NULL, 
+	phone VARCHAR(15) NOT NULL, 
+	name VARCHAR(20) NOT NULL, 
+	rating INTEGER NOT NULL, 
+	doreg DATETIME NOT NULL, 
+	PRIMARY KEY (uid), 
+	UNIQUE (uid), 
+	UNIQUE (email), 
+	UNIQUE (phone)
 );
-
-CREATE TABLE users_meta(
-uid integer not null unique primary key,
-email text not null unique,
-phone_no text not null unique,
-name text not null,
-id_proof text not null unique,
-subs text not null unique,
-folls text not null unique,
-blist text not null unique,
-rating integer not null
+INSERT INTO users_meta VALUES(1,'yashdeep.saini@students.iiit.ac.in','99999899','yash',0,'2018-11-13 20:16:16.725388');
+CREATE TABLE user_creds (
+	uid INTEGER NOT NULL, 
+	name VARCHAR(20) NOT NULL, 
+	password VARCHAR(50) NOT NULL, 
+	otp VARCHAR(10) NOT NULL, 
+	PRIMARY KEY (uid), 
+	UNIQUE (uid)
 );
-
-CREATE TABLE ride_meta(
-  ride_id integer not null unique primary key,
-  loc_source text not null,
-  loc_dest text not null,
-  date_c text not null,
-
-  traverllerid text not null
+INSERT INTO user_creds VALUES(1,'yashdeep.saini@students.iiit.ac.in','yashdeep','ME-3799476');
+CREATE TABLE rides_meta (
+	rid INTEGER NOT NULL, 
+	src VARCHAR(250) NOT NULL, 
+	dest VARCHAR(250) NOT NULL, 
+	rdate DATETIME NOT NULL, 
+	seats INTEGER NOT NULL, 
+	price FLOAT NOT NULL, 
+	hour INTEGER NOT NULL, 
+	PRIMARY KEY (rid), 
+	UNIQUE (rid)
 );
-
-CREATE TABLE rider(
-  car_model text not null unique,
-  no_of_seats integer not null,
-  avlbl_seats integer not null,
-  rating integer not null,
-  rides_given integer not null
+INSERT INTO rides_meta VALUES(1,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(2,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(3,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(4,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(5,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(6,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(7,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(8,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(9,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(10,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(11,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(12,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(13,'x','y','2018-11-10 00:00:00.000000',4,34.34000000000000341,10);
+INSERT INTO rides_meta VALUES(14,'ab','ay','2018-11-13 18:57:29.411417',4,34.34000000000000341,10);
+CREATE TABLE rider (
+	uid INTEGER NOT NULL, 
+	car_model VARCHAR(250) NOT NULL, 
+	seats INTEGER NOT NULL, 
+	avlbl_seats INTEGER NOT NULL, 
+	rating INTEGER NOT NULL, 
+	rides_given FLOAT NOT NULL, 
+	PRIMARY KEY (uid), 
+	UNIQUE (uid)
 );
-
-CREATE TABLE traveller(
-  blocking_list text not null,
-  rating integer not null,
-  rides_taken integer not null,
-  pref text not null
+CREATE TABLE rides_given (
+	idx INTEGER NOT NULL, 
+	uid INTEGER NOT NULL, 
+	rid INTEGER NOT NULL, 
+	PRIMARY KEY (idx), 
+	UNIQUE (idx), 
+	UNIQUE (rid)
 );
+INSERT INTO rides_given VALUES(1,1,1);
+INSERT INTO rides_given VALUES(2,1,2);
+INSERT INTO rides_given VALUES(3,1,3);
+INSERT INTO rides_given VALUES(4,1,4);
+INSERT INTO rides_given VALUES(5,1,5);
+INSERT INTO rides_given VALUES(6,1,6);
+INSERT INTO rides_given VALUES(7,1,7);
+INSERT INTO rides_given VALUES(8,1,8);
+INSERT INTO rides_given VALUES(9,1,9);
+INSERT INTO rides_given VALUES(10,1,10);
+INSERT INTO rides_given VALUES(11,1,11);
+INSERT INTO rides_given VALUES(12,1,12);
+INSERT INTO rides_given VALUES(13,1,13);
+CREATE TABLE subscriptions (
+	idx INTEGER NOT NULL, 
+	uid INTEGER NOT NULL, 
+	pid INTEGER NOT NULL, 
+	PRIMARY KEY (idx), 
+	UNIQUE (idx), 
+	UNIQUE (pid)
+);
+INSERT INTO subscriptions VALUES(1,1,1);
 COMMIT;

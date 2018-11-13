@@ -5,12 +5,12 @@ s2 = r.Session()
 
 url = "http://127.0.0.1:5000/"
 headers = {'Content-type': 'application/json'}
-
-# d = {'user-mail':'vischugh@gmail.com', 'user-pass':'vishal'}
+#
+# d = {'user-mail':'yashdeep.saini@students.iiit.ac.in', 'user-pass':'yashdeep'}
 # resp = s1.post(url + 'login', json=d, headers=headers)
 # print resp.text
 # print 'HEADERS ---------------\n\n\n', resp.headers
-#
+
 #
 # print '\n\n\n\nPROFILE FETCH TESTSTSTSTST'
 # resp = s1.get(url + 'profile', headers=headers)
@@ -22,19 +22,26 @@ headers = {'Content-type': 'application/json'}
 # resp = s2.post(url + 'login', json=d, headers=headers)
 # print resp.text #, resp.headers
 #
-# d = {'user':'yash', 'pass':'deep'}
+
+
+# #d = {'user':'saini', 'pass':'yash'}
+# resp = s1.get(url + 'profile', json=d, headers=headers)
+# print resp.text #, resp.headers
+#
+# #d = {'user':'yash', 'pass':'deep'}
+#
 # resp = s1.post(url + 'logout', json=d, headers=headers)
 # print resp.text #, resp.headers
 #
-# d = {'user':'saini', 'pass':'yash'}
-# resp = s2.post(url + 'profile', json=d, headers=headers)
+# #d = {'user':'saini', 'pass':'yash'}
+# resp = s1.get(url + 'profile', json=d, headers=headers)
 # print resp.text #, resp.headers
-#
+
 # d = {
 # 'user-mail' : 'yashdeep.saini@students.iiit.ac.in',
 # 'user-mob' : '99999899',
 # 'user-name' : 'yash',
-# 'user-pass' : 'asdasdasdpass'
+# 'user-pass' : 'yashdeep'
 # }
 #
 # resp = s2.post(url + 'register', json=d, headers=headers)
@@ -42,7 +49,7 @@ headers = {'Content-type': 'application/json'}
 #
 # d = {
 # 'user-mail' : 'yashdeep.saini@students.iiit.ac.in',
-# 'otp' : 'PN-6975919'
+# 'otp' : 'ME-3799476'
 # }
 # resp = s2.post(url + 'verify', json=d, headers=headers)
 # print resp.text, resp.headers
@@ -82,10 +89,13 @@ headers = {'Content-type': 'application/json'}
 #
 # resp = s2.post(url + 'find', json=d, headers=headers)
 # print resp.text, resp.headers
-
+#
 d = {
 'rider-id' : '2'
 }
+#
+# resp = s2.post(url + 'subscribe', json=d, headers=headers)
+# print resp.text, resp.headers
 
-resp = s2.post(url + 'subscribe', json=d, headers=headers)
+resp = s2.post(url + 'notifications', json=d, headers=headers)
 print resp.text, resp.headers
