@@ -31,8 +31,7 @@ CREATE TABLE ride_meta(
   loc_source text not null,
   loc_dest text not null,
   date_c text not null,
-  stops text,
-  status integer not null,
+
   traverllerid text not null
 );
 

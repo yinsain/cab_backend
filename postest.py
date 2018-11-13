@@ -39,10 +39,46 @@ headers = {'Content-type': 'application/json'}
 #
 # resp = s2.post(url + 'register', json=d, headers=headers)
 # print resp.text, resp.headers
+#
+# d = {
+# 'user-mail' : 'yashdeep.saini@students.iiit.ac.in',
+# 'otp' : 'PN-6975919'
+# }
+# resp = s2.post(url + 'verify', json=d, headers=headers)
+# print resp.text, resp.headers
+
 
 d = {
-'user-mail' : 'yashdeep.saini@students.iiit.ac.in',
-'otp' : 'PN-6975919'
+'source' : 'x',
+'dest' : 'y',
+'date' : '10/11/2018',
+'seats' : '4',
+'price' : '34.34',
+'hour' : '10'
 }
-resp = s2.post(url + 'verify', json=d, headers=headers)
+
+resp = s2.post(url + 'offer', json=d, headers=headers)
 print resp.text, resp.headers
+
+d = {
+'source' : 'x',
+'dest' : 'y',
+'date' : '10/11/2018',
+'seats' : '4',
+'price' : '34.34',
+'hour' : '10'
+}
+
+resp = s2.post(url + 'offered', json=d, headers=headers)
+print resp.text, resp.headers
+#
+# d = {
+# 'source' : 'x',
+# 'dest' : 'y',
+# 'date' : '10/11/2018',
+# 'seats' : '4',
+# 'hour' : '10'
+# }
+#
+# resp = s2.post(url + 'find', json=d, headers=headers)
+# print resp.text, resp.headers
