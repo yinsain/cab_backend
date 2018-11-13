@@ -1,5 +1,8 @@
 *.pyc
 *.pyd
 *.pyo
+*.json
+*.db
 cab_backend/
 venv_cab/
+__pycache__/
