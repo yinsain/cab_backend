@@ -61,6 +61,14 @@ class RidesGiven(db.Model):
     def __repr__(self):
         return f"RidesGiven('{self.idx}', '{self.uid}', '{self.rid}')"
 
+class Subscriptions(db.Model):
+    idx = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    uid = db.Column(db.Integer, nullable=False)
+    pid = db.Column(db.Integer, unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"Subscriptions('{self.idx}', '{self.uid}', '{self.pid}')"
+
 
 def is_logged_in(f):
     @wraps(f)
@@ -177,8 +185,8 @@ def offer_ride():
 def find_ride():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
+            rides_list = list()
             x = request.get_json()
-
             tdate = x['date'].split('/')
             dobj = datetime.datetime(int(tdate[2]), int(tdate[1]), int(tdate[0]))
             src = x['source']
@@ -189,19 +197,6 @@ def find_ride():
             src.startswith(x['source']),
             dest.startswith(x['dest']),
             ).all()
-
-            for x in res:
-                print(x)
-            return jsonify({'rides' : 'found'})
-        else:
-            return jsonify({'rides' : 'no-rides'})
-
-@app.route('/offered', methods = ['POST'])
-def offered_ride():
-    if request.method == 'POST':
-        if 'application/json' in request.headers['Content-type']:
-            res = RidesGiven.query.filter_by(uid=1)
-            rides_list = list()
             for x in res:
                 print('TESTING===', x.rid)
                 rm =  RidesMeta.query.filter_by(rid=x.rid).first()
@@ -217,6 +212,39 @@ def offered_ride():
             return jsonify({'rides' : rides_list})
         else:
             return jsonify({'rides' : 'no-rides'})
+
+@app.route('/offered', methods = ['GET'])
+def offered_ride():
+    if request.method == 'GET':
+        res = RidesGiven.query.filter_by(uid=1)
+        rides_list = list()
+        for x in res:
+            print('TESTING===', x.rid)
+            rm =  RidesMeta.query.filter_by(rid=x.rid).first()
+            rides_list.append({
+            'rid' : rm.rid,
+            'source' : rm.src,
+            'dest' : rm.dest,
+            'date' : rm.rdate,
+            'seats' : rm.seats,
+            'price' : rm.price,
+            'hour' : rm.hour
+            })
+        return jsonify({'rides' : rides_list})
+    else:
+        return jsonify({'rides' : 'no-rides'})
+
+@app.route('/subscribe', methods= ['POST'])
+def subscribe():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            s = Subscriptions(uid=1, pid=int(x['rider-id']))
+            db.session.add(s)
+            db.session.commit()
+            return jsonify({'subscribe' : 'added'})
+        else:
+            return jsonify({'subscribe' : 'failed'})
 
 if __name__ == '__main__':
     #db.drop_all()

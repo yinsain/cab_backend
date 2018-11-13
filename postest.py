@@ -47,30 +47,30 @@ headers = {'Content-type': 'application/json'}
 # resp = s2.post(url + 'verify', json=d, headers=headers)
 # print resp.text, resp.headers
 
-
-d = {
-'source' : 'x',
-'dest' : 'y',
-'date' : '10/11/2018',
-'seats' : '4',
-'price' : '34.34',
-'hour' : '10'
-}
-
-resp = s2.post(url + 'offer', json=d, headers=headers)
-print resp.text, resp.headers
-
-d = {
-'source' : 'x',
-'dest' : 'y',
-'date' : '10/11/2018',
-'seats' : '4',
-'price' : '34.34',
-'hour' : '10'
-}
-
-resp = s2.post(url + 'offered', json=d, headers=headers)
-print resp.text, resp.headers
+#
+# d = {
+# 'source' : 'x',
+# 'dest' : 'y',
+# 'date' : '10/11/2018',
+# 'seats' : '4',
+# 'price' : '34.34',
+# 'hour' : '10'
+# }
+#
+# resp = s2.post(url + 'offer', json=d, headers=headers)
+# print resp.text, resp.headers
+#
+# d = {
+# 'source' : 'x',
+# 'dest' : 'y',
+# 'date' : '10/11/2018',
+# 'seats' : '4',
+# 'price' : '34.34',
+# 'hour' : '10'
+# }
+#
+# resp = s2.post(url + 'offered', json=d, headers=headers)
+# print resp.text, resp.headers
 #
 # d = {
 # 'source' : 'x',
@@ -82,3 +82,10 @@ print resp.text, resp.headers
 #
 # resp = s2.post(url + 'find', json=d, headers=headers)
 # print resp.text, resp.headers
+
+d = {
+'rider-id' : '2'
+}
+
+resp = s2.post(url + 'subscribe', json=d, headers=headers)
+print resp.text, resp.headers
