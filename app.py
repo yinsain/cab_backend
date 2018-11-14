@@ -319,6 +319,18 @@ def book():
         else:
             return jsonify({'ride' : 'booking-failed'})
 
+@app.route('/unbook', methods = ['POST'])
+def unbook():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            RidesBooked.query.filter_by(uid=x['userId'], rid=int(x['rid'])).delete()
+            db.session.commit()
+            return jsonify({'ride' : 'cancelled'})
+        else:
+            return jsonify({'ride' : 'booking-cancellation-failed'})
+
+
 if __name__ == '__main__':
     #db.drop_all()
     db.create_all()
