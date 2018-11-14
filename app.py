@@ -7,12 +7,6 @@ import datetime
 from otputils import otp_send
 
 app = Flask(__name__)
-CORS(app, support_credentials=True,\
-resources={
-    r"/profile" : {"origins": "http://127.0.0.1:5050"},
-    r"/login" : {"origins": "http://127.0.0.1:5050"}
-    })
-
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main_site.db'
 db = SQLAlchemy(app)
@@ -76,17 +70,6 @@ class Subscriptions(db.Model):
     def __repr__(self):
         return f"Subscriptions('{self.idx}', '{self.uid}', '{self.pid}')"
 
-
-def is_logged_in(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            flash('Unauthorized, Please login', 'danger')
-            return 'Logged Out!!'
-    return wrap
-
 @app.route('/register', methods = ['POST'])
 def register():
     if request.method == 'POST':
@@ -147,16 +130,16 @@ def logout():
         return jsonify({'status':'logout-success'})
 
 @app.route('/profile', methods = ['GET'])
-#@is_logged_in
 def profile():
     if request.method == 'GET':
-        r = UsersMeta.query.filter_by(email=session['name']).first()
+        r = UsersMeta.query.filter_by(email=session['userMail']).first()
         return jsonify({
-            'user-mail': r.email,
-            'user-mob' : r.phone,
-            'user-name' : r.name,
-            'user-rating' : r.rating,
-            'user-doj' : r.doreg
+            'userMail': r.email,
+            'userMob' : r.phone,
+            'userName' : r.name,
+            'userRating' : r.rating,
+            'userDoj' : r.doreg,
+            'userId' : r.uid
         })
     else:
         return jsonify({'status':'profile-failed'})
