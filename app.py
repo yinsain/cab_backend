@@ -286,21 +286,20 @@ def booked():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
             rides_list = list()
-            slist = RidesBooked.query.filter_by(uid=1)
+            x = request.get_json()
+            slist = RidesBooked.query.filter_by(uid=int(x['userId'])).all()
             for sx in slist:
-                res = RidesGiven.query.filter_by(uid=sx.rid)
-                for x in res:
-                    print('TESTING===', x.rid)
-                    rm =  RidesMeta.query.filter_by(rid=x.rid).first()
-                    rides_list.append({
-                    'rid' : rm.rid,
-                    'source' : rm.src,
-                    'dest' : rm.dest,
-                    'date' : rm.rdate,
-                    'seats' : rm.seats,
-                    'price' : rm.price,
-                    'hour' : rm.hour
-                    })
+                print('TESTING===', sx.rid)
+                rm =  RidesMeta.query.filter_by(rid=sx.rid).first()
+                rides_list.append({
+                'rid' : rm.rid,
+                'source' : rm.src,
+                'dest' : rm.dest,
+                'date' : rm.rdate,
+                'seats' : rm.seats,
+                'price' : rm.price,
+                'hour' : rm.hour
+                })
             return jsonify({'rides' : rides_list})
         else:
             return jsonify({'rides' : 'nothing-new'})

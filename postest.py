@@ -90,7 +90,7 @@ d = {
 'hour' : '10'
 }
 
-resp = s2.post(url + 'offered', json=d, headers=headers)
+resp = s2.post(url + 'booked', json=d, headers=headers)
 print resp.text, resp.headers
 # #
 # d = {
