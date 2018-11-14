@@ -202,6 +202,8 @@ def find_ride():
             for x in res:
                 print('TESTING===', x.rid)
                 rm =  RidesMeta.query.filter_by(rid=x.rid).first()
+                rg = RidesGiven.query.filter_by(rid=x.rid).first()
+                u = UsersMeta.query.filter_by(uid=rg[0].uid).first()
                 rides_list.append({
                 'rid' : rm.rid,
                 'source' : rm.src,
@@ -209,7 +211,8 @@ def find_ride():
                 'date' : rm.rdate,
                 'seats' : rm.seats,
                 'price' : rm.price,
-                'hour' : rm.hour
+                'hour' : rm.hour,
+                'name' : u[0].name
                 })
             return jsonify({'rides' : rides_list})
         else:
@@ -224,6 +227,8 @@ def offered_ride():
         for x in res:
             print('TESTING===', x.rid)
             rm =  RidesMeta.query.filter_by(rid=x.rid).first()
+            rg = RidesGiven.query.filter_by(rid=x.rid).first()
+            u = UsersMeta.query.filter_by(uid=rg[0].uid).first()
             rides_list.append({
             'rid' : rm.rid,
             'source' : rm.src,
@@ -232,7 +237,9 @@ def offered_ride():
             'seats' : rm.seats,
             'price' : rm.price,
             'hour' : rm.hour,
-            'name': res_name.name
+            'name': res_name.name,
+            'name' : u[0].name,
+            'phone' : u[0].phone
             })
         return jsonify({'rides' : rides_list})
     else:
