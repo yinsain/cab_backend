@@ -183,7 +183,7 @@ def remove_ride():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
             x = request.get_json()
-            RidesMeta.query.filter_by(uid=int(x['userId']), rid=int(x['rid'])).delete()
+            RidesMeta.query.filter_by(rid=int(x['userId']), rid=int(x['rid'])).delete()
             db.session.commit()
             RidesGiven.query.filter_by(rid=int(x['rid'])).delete()
             db.session.commit()
