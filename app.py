@@ -193,6 +193,7 @@ def find_ride():
             res =  RidesMeta.query.filter(
             RidesMeta.src.startswith(x['source']),
             RidesMeta.dest.startswith(x['dest']),
+            RidesMeta.rdate == dobj
             ).all()
             for x in res:
                 print('TESTING===', x.rid)
