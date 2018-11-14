@@ -179,7 +179,7 @@ def offer_ride():
             return jsonify({'status' : 'ride-offer-failed'})
 
 @app.route('/removeoffer', methods = ['POST'])
-def offer_ride():
+def remove_ride():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
             x = request.get_json()
