@@ -128,18 +128,20 @@ def logout():
         session.clear()
         return jsonify({'status':'logout-success'})
 
-@app.route('/profile', methods = ['GET'])
+@app.route('/profile', methods = ['POST'])
 def profile():
-    if request.method == 'GET':
-        r = UsersMeta.query.filter_by(email=session['userMail']).first()
-        return jsonify({
-            'userMail': r.email,
-            'userMob' : r.phone,
-            'userName' : r.name,
-            'userRating' : r.rating,
-            'userDoj' : r.doreg,
-            'userId' : r.uid
-        })
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            r = UsersMeta.query.filter_by(email=x['userMail']).first()
+            return jsonify({
+                'userMail': r.email,
+                'userMob' : r.phone,
+                'userName' : r.name,
+                'userRating' : r.rating,
+                'userDoj' : r.doreg,
+                'userId' : r.uid
+            })
     else:
         return jsonify({'status':'profile-failed'})
 
