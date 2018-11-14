@@ -294,7 +294,7 @@ def booked():
             return jsonify({'rides' : 'nothing-new'})
 
 @app.route('/book', methods = ['POST'])
-def booked():
+def book():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
             x = request.get_json()
