@@ -203,7 +203,7 @@ def find_ride():
                 print('TESTING===', x.rid)
                 rm =  RidesMeta.query.filter_by(rid=x.rid).first()
                 rg = RidesGiven.query.filter_by(rid=x.rid).first()
-                u = UsersMeta.query.filter_by(uid=rg[0].uid).first()
+                u = UsersMeta.query.filter_by(uid=rg.uid).first()
                 rides_list.append({
                 'rid' : rm.rid,
                 'source' : rm.src,
@@ -212,15 +212,15 @@ def find_ride():
                 'seats' : rm.seats,
                 'price' : rm.price,
                 'hour' : rm.hour,
-                'name' : u[0].name
+                'name' : u.name
                 })
             return jsonify({'rides' : rides_list})
         else:
             return jsonify({'rides' : 'no-rides'})
 
-@app.route('/offered', methods = ['GET'])
+@app.route('/offered', methods = ['POST'])
 def offered_ride():
-    if request.method == 'GET':
+    if request.method == 'POST':
         res = RidesGiven.query.filter_by(uid=1)
         res_name = UsersMeta.query.filter_by(email='yashdeep.saini@students.iiit.ac.in').first()
         rides_list = list()
@@ -228,7 +228,7 @@ def offered_ride():
             print('TESTING===', x.rid)
             rm =  RidesMeta.query.filter_by(rid=x.rid).first()
             rg = RidesGiven.query.filter_by(rid=x.rid).first()
-            u = UsersMeta.query.filter_by(uid=rg[0].uid).first()
+            u = UsersMeta.query.filter_by(uid=rg.uid).first()
             rides_list.append({
             'rid' : rm.rid,
             'source' : rm.src,
@@ -238,8 +238,8 @@ def offered_ride():
             'price' : rm.price,
             'hour' : rm.hour,
             'name': res_name.name,
-            'name' : u[0].name,
-            'phone' : u[0].phone
+            'name' : u.name,
+            'phone' : u.phone
             })
         return jsonify({'rides' : rides_list})
     else:

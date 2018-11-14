@@ -6,19 +6,19 @@ s2 = r.Session()
 url = "http://127.0.0.1:5000/"
 headers = {'Content-type': 'application/json'}
 
-d = {'user-mail':'yashdeep.saini@students.iiit.ac.in', 'user-pass':'yashdeep'}
-resp = s1.post(url + 'login', json=d, headers=headers)
-print resp.text
-print 'HEADERS ---------------\n\n\n', resp.headers
-
-print s1.cookies, '\n\n\n\n\n'
-
-
-
-print '\n\n\n\nPROFILE FETCH TESTSTSTSTST'
-resp = s1.get(url + 'profile', headers=headers)
-print resp.text
-print 'HEADERS ---------------\n\n\n', resp.headers
+# d = {'user-mail':'yashdeep.saini@students.iiit.ac.in', 'user-pass':'yashdeep'}
+# resp = s1.post(url + 'login', json=d, headers=headers)
+# print resp.text
+# print 'HEADERS ---------------\n\n\n', resp.headers
+#
+# print s1.cookies, '\n\n\n\n\n'
+#
+#
+#
+# print '\n\n\n\nPROFILE FETCH TESTSTSTSTST'
+# resp = s1.get(url + 'profile', headers=headers)
+# print resp.text
+# print 'HEADERS ---------------\n\n\n', resp.headers
 
 
 # d = {'user':'saini', 'pass':'yash'}
@@ -82,16 +82,16 @@ print 'HEADERS ---------------\n\n\n', resp.headers
 # resp = s2.get(url + 'offered', json=d, headers=headers)
 # print resp.text, resp.headers
 
-# d = {
-# 'source' : 'x',
-# 'dest' : 'y',
-# 'date' : '10/11/2018',
-# 'seats' : '4',
-# 'hour' : '10'
-# }
-#
-# resp = s2.post(url + 'find', json=d, headers=headers)
-# print resp.text, resp.headers
+d = {
+'source' : 'x',
+'dest' : 'y',
+'date' : '10/11/2018',
+'seats' : '4',
+'hour' : '10'
+}
+
+resp = s2.post(url + 'offered', json=d, headers=headers)
+print resp.text, resp.headers
 # #
 # d = {
 # 'rider-id' : '2'
