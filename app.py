@@ -190,10 +190,14 @@ def find_ride():
             dest=x['dest']
             rdate=dobj
             hour=int(x['hour'])
+            seats = int(x['seats'])
             res =  RidesMeta.query.filter(
             RidesMeta.src.startswith(x['source']),
             RidesMeta.dest.startswith(x['dest']),
-            RidesMeta.rdate == dobj
+            RidesMeta.rdate == dobj,
+            RidesMeta.hour >= hour - 2,
+            RidesMeta.hour <= hour + 2,
+            RidesMeta.seats >= seats
             ).all()
             for x in res:
                 print('TESTING===', x.rid)
