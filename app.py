@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 from flask import Flask, request, jsonify, session, flash, redirect, url_for, make_response
-from functools import wraps
-from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 from otputils import otp_send
@@ -61,6 +59,14 @@ class RidesGiven(db.Model):
 
     def __repr__(self):
         return f"RidesGiven('{self.idx}', '{self.uid}', '{self.rid}')"
+
+class RidesBooked(db.Model):
+    idx = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    uid = db.Column(db.Integer, nullable=False)
+    rid = db.Column(db.Integer, unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"RidesBooked('{self.idx}', '{self.uid}', '{self.rid}')"
 
 class Subscriptions(db.Model):
     idx = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
@@ -247,6 +253,30 @@ def notifiy():
             slist = Subscriptions.query.filter_by(uid=1)
             for sx in slist:
                 res = RidesGiven.query.filter_by(uid=sx.pid)
+                for x in res:
+                    print('TESTING===', x.rid)
+                    rm =  RidesMeta.query.filter_by(rid=x.rid).first()
+                    rides_list.append({
+                    'rid' : rm.rid,
+                    'source' : rm.src,
+                    'dest' : rm.dest,
+                    'date' : rm.rdate,
+                    'seats' : rm.seats,
+                    'price' : rm.price,
+                    'hour' : rm.hour
+                    })
+            return jsonify({'rides' : rides_list})
+        else:
+            return jsonify({'rides' : 'nothing-new'})
+
+@app.route('/booked', methods = ['POST'])
+def booked():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            rides_list = list()
+            slist = RidesBooked.query.filter_by(uid=1)
+            for sx in slist:
+                res = RidesGiven.query.filter_by(uid=sx.rid)
                 for x in res:
                     print('TESTING===', x.rid)
                     rm =  RidesMeta.query.filter_by(rid=x.rid).first()
