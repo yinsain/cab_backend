@@ -81,17 +81,22 @@ headers = {'Content-type': 'application/json'}
 #
 # resp = s2.get(url + 'offered', json=d, headers=headers)
 # print resp.text, resp.headers
+# 
+# d = {
+# 'userId' : '1',
+# 'rid' : '15'
+# }
+#
+# resp = s2.post(url + 'book', json=d, headers=headers)
+# print resp.text, resp.headers
 
 d = {
-'source' : 'x',
-'dest' : 'y',
-'date' : '10/11/2018',
-'seats' : '4',
-'hour' : '10'
+'userId' : '1',
+'rid' : '15'
 }
-
-resp = s2.post(url + 'booked', json=d, headers=headers)
+resp = s2.post(url + 'unbook', json=d, headers=headers)
 print resp.text, resp.headers
+# #
 # #
 # d = {
 # 'rider-id' : '2'

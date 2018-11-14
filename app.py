@@ -178,6 +178,21 @@ def offer_ride():
         else:
             return jsonify({'status' : 'ride-offer-failed'})
 
+@app.route('/removeoffer', methods = ['POST'])
+def offer_ride():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            RidesMeta.query.filter_by(uid=int(x['userId']), rid=int(x['rid'])).delete()
+            db.session.commit()
+            RidesGiven.query.filter_by(rid=int(x['rid'])).delete()
+            db.session.commit()
+            RidesBooked.query.filter_by(rid=int(x['rid'])).delete()
+            db.session.commit()
+            return jsonify({'status' : 'ride-remove'})
+        else:
+            return jsonify({'status' : 'ride-offer-remove-failed'})
+
 @app.route('/find', methods = ['POST'])
 def find_ride():
     if request.method == 'POST':
