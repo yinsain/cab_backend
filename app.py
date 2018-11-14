@@ -293,6 +293,18 @@ def booked():
         else:
             return jsonify({'rides' : 'nothing-new'})
 
+@app.route('/book', methods = ['POST'])
+def booked():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            s = RidesBooked(uid=x['userId'], rid=int(x['rid']))
+            db.session.add(s)
+            db.session.commit()
+            return jsonify({'ride' : 'booked'})
+        else:
+            return jsonify({'ride' : 'booking-failed'})
+
 if __name__ == '__main__':
     #db.drop_all()
     db.create_all()
