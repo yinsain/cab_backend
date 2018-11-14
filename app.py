@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
-from flask import Flask, request, jsonify, session, flash, redirect, url_for
+from flask import Flask, request, jsonify, session, flash, redirect, url_for, make_response
 from functools import wraps
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 from otputils import otp_send
 
 app = Flask(__name__)
+CORS(app, support_credentials=True,\
+resources={
+    r"/profile" : {"origins": "http://127.0.0.1:5050"},
+    r"/login" : {"origins": "http://127.0.0.1:5050"}
+    })
+
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main_site.db'
 db = SQLAlchemy(app)
@@ -116,7 +123,12 @@ def verifycode():
 @app.route('/login', methods = ['POST'])
 def login():
     if request.method == 'POST':
-        if request.headers['Content-type'] == 'application/json':
+        if 'application/json' in request.headers['Content-type']:
+            for t,x in request.headers.items():
+                print(t,x)
+            print(len(request.cookies))
+            for t,x in request.cookies.items():
+                print(t,x)
             x = request.get_json()
             res = UserCreds.query.filter_by(name=x['user-mail']).first()
             if res.password == x['user-pass'] and res.name == x['user-mail']:
@@ -135,7 +147,7 @@ def logout():
         return jsonify({'status':'logout-success'})
 
 @app.route('/profile', methods = ['GET'])
-@is_logged_in
+#@is_logged_in
 def profile():
     if request.method == 'GET':
         r = UsersMeta.query.filter_by(email=session['name']).first()
@@ -212,6 +224,7 @@ def find_ride():
 def offered_ride():
     if request.method == 'GET':
         res = RidesGiven.query.filter_by(uid=1)
+        res_name = UsersMeta.query.filter_by(email='yashdeep.saini@students.iiit.ac.in').first()
         rides_list = list()
         for x in res:
             print('TESTING===', x.rid)
@@ -223,7 +236,8 @@ def offered_ride():
             'date' : rm.rdate,
             'seats' : rm.seats,
             'price' : rm.price,
-            'hour' : rm.hour
+            'hour' : rm.hour,
+            'name': res_name.name
             })
         return jsonify({'rides' : rides_list})
     else:
