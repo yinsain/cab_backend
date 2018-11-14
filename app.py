@@ -170,7 +170,7 @@ def offer_ride():
             db.session.commit()
             #b = Rides_given(uid=session['uid'], rid=a.rid)
             print(a)
-            b = RidesGiven(uid=1, rid=a.rid)
+            b = RidesGiven(uid=x['userId'], rid=a.rid)
             db.session.add(b)
             db.session.commit()
 
@@ -221,36 +221,38 @@ def find_ride():
 @app.route('/offered', methods = ['POST'])
 def offered_ride():
     if request.method == 'POST':
-        res = RidesGiven.query.filter_by(uid=1)
-        res_name = UsersMeta.query.filter_by(email='yashdeep.saini@students.iiit.ac.in').first()
-        rides_list = list()
-        for x in res:
-            print('TESTING===', x.rid)
-            rm =  RidesMeta.query.filter_by(rid=x.rid).first()
-            rg = RidesGiven.query.filter_by(rid=x.rid).first()
-            u = UsersMeta.query.filter_by(uid=rg.uid).first()
-            rides_list.append({
-            'rid' : rm.rid,
-            'source' : rm.src,
-            'dest' : rm.dest,
-            'date' : rm.rdate,
-            'seats' : rm.seats,
-            'price' : rm.price,
-            'hour' : rm.hour,
-            'name': res_name.name,
-            'name' : u.name,
-            'phone' : u.phone
-            })
-        return jsonify({'rides' : rides_list})
-    else:
-        return jsonify({'rides' : 'no-rides'})
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            res = RidesGiven.query.filter_by(uid=int(x['userId']))
+            res_name = UsersMeta.query.filter_by(email=x['userMail']).first()
+            rides_list = list()
+            for x in res:
+                print('TESTING===', x.rid)
+                rm =  RidesMeta.query.filter_by(rid=x.rid).first()
+                rg = RidesGiven.query.filter_by(rid=x.rid).first()
+                u = UsersMeta.query.filter_by(uid=rg.uid).first()
+                rides_list.append({
+                'rid' : rm.rid,
+                'source' : rm.src,
+                'dest' : rm.dest,
+                'date' : rm.rdate,
+                'seats' : rm.seats,
+                'price' : rm.price,
+                'hour' : rm.hour,
+                'name': res_name.name,
+                'name' : u.name,
+                'phone' : u.phone
+                })
+            return jsonify({'rides' : rides_list})
+        else:
+            return jsonify({'rides' : 'no-rides'})
 
 @app.route('/subscribe', methods = ['POST'])
 def subscribe():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
             x = request.get_json()
-            s = Subscriptions(uid=1, pid=int(x['rider-id']))
+            s = Subscriptions(uid=int(x['userId']), pid=int(x['rider-id']))
             db.session.add(s)
             db.session.commit()
             return jsonify({'subscribe' : 'added'})
@@ -261,10 +263,11 @@ def subscribe():
 def notifiy():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
             rides_list = list()
-            slist = Subscriptions.query.filter_by(uid=1)
+            slist = Subscriptions.query.filter_by(uid=int(x['userId'])).all()
             for sx in slist:
-                res = RidesGiven.query.filter_by(uid=sx.pid)
+                res = RidesGiven.query.filter_by(uid=sx.pid).all()
                 for x in res:
                     print('TESTING===', x.rid)
                     rm =  RidesMeta.query.filter_by(rid=x.rid).first()
