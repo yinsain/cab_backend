@@ -123,7 +123,6 @@ def login():
                 return jsonify({'status':'login-failed'})
 
 @app.route('/logout', methods = ['POST'])
-@is_logged_in
 def logout():
     if request.method == 'POST':
         session.clear()
