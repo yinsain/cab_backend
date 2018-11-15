@@ -227,7 +227,8 @@ def find_ride():
                 'seats' : rm.seats,
                 'price' : rm.price,
                 'hour' : rm.hour,
-                'name' : u.name
+                'name' : u.name,
+                'mail' : u.email
                 })
             return jsonify({'rides' : rides_list})
         else:
@@ -256,7 +257,8 @@ def offered_ride():
                 'hour' : rm.hour,
                 'name': res_name.name,
                 'name' : u.name,
-                'phone' : u.phone
+                'phone' : u.phone,
+                'mail' : u.email
                 })
             return jsonify({'rides' : rides_list})
         else:
