@@ -71,7 +71,7 @@ class RidesBooked(db.Model):
 class Subscriptions(db.Model):
     idx = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     uid = db.Column(db.Integer, nullable=False)
-    pid = db.Column(db.Integer, unique=True, nullable=False)
+    pid = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return f"Subscriptions('{self.idx}', '{self.uid}', '{self.pid}')"
@@ -311,6 +311,7 @@ def booked():
             for sx in slist:
                 print('TESTING===', sx.rid)
                 rm =  RidesMeta.query.filter_by(rid=sx.rid).first()
+                u = UsersMeta.query.filter_by(uid=rm.uid).first()
                 rides_list.append({
                 'rid' : rm.rid,
                 'source' : rm.src,
@@ -318,7 +319,10 @@ def booked():
                 'date' : rm.rdate,
                 'seats' : rm.seats,
                 'price' : rm.price,
-                'hour' : rm.hour
+                'hour' : rm.hour,
+                'name' : u.name,
+                'phone' : u.phone,
+                'mail' : u.email
                 })
             return jsonify({'rides' : rides_list})
         else:
