@@ -311,7 +311,8 @@ def booked():
             for sx in slist:
                 print('TESTING===', sx.rid)
                 rm =  RidesMeta.query.filter_by(rid=sx.rid).first()
-                u = UsersMeta.query.filter_by(uid=rm.uid).first()
+                rg = RidesGiven.query.filter_by(rid=rm.rid).first()
+                u = UsersMeta.query.filter_by(uid=rg.uid).first()
                 rides_list.append({
                 'rid' : rm.rid,
                 'source' : rm.src,
