@@ -71,7 +71,7 @@ class RidesBooked(db.Model):
 class Subscriptions(db.Model):
     idx = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     uid = db.Column(db.Integer, nullable=False)
-    pid = db.Column(db.Integer, unique=True, nullable=False)
+    pid = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return f"Subscriptions('{self.idx}', '{self.uid}', '{self.pid}')"
