@@ -397,7 +397,7 @@ def reqbook():
             return jsonify({'ride' : 'booking-request-failed'})
 
 @app.route('/confirmbook', methods = ['POST'])
-def reqbook():
+def cnfbook():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
             x = request.get_json()
