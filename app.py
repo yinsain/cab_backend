@@ -76,6 +76,46 @@ class Subscriptions(db.Model):
     def __repr__(self):
         return f"Subscriptions('{self.idx}', '{self.uid}', '{self.pid}')"
 
+class Notifications(db.Model):
+    idx = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    uid = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.Integer, nullable=False)
+    xid = db.Column(db.Integer, nullable=False)
+    rid = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"Notifications('{self.idx}', '{self.uid}', '{self.type}', '{self.rid}', '{self.status}')"
+
+class RequestRide(db.Model):
+    idx = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    uid = db.Column(db.Integer, nullable=False)
+    rid = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"RequestRide('{self.idx}', '{self.uid}', '{self.rid}')"
+
+@app.route('/bnotify', methods = ['POST'])
+def notify():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            u = x['userId']
+            notify_list = list()
+            res = Notifications.query.filter_by(uid=int(x['userId'])).all()
+            for r in res:
+                notifiy_list.append({
+                    'userId': r.uid,
+                    'type' : r.type,
+                    'xid' : r.xid,
+                    'rid' : r.rid,
+                    'readstatus' : r.status,
+                })
+            return jsonify('status': notify_list)
+    else:
+        return jsonify({'status':'profile-failed'})
+
+
 @app.route('/register', methods = ['POST'])
 def register():
     if request.method == 'POST':
@@ -311,7 +351,8 @@ def booked():
             for sx in slist:
                 print('TESTING===', sx.rid)
                 rm =  RidesMeta.query.filter_by(rid=sx.rid).first()
-                u = UsersMeta.query.filter_by(uid=rm.uid).first()
+                rg = RidesGiven.query.filter_by(rid=rm.rid).first()
+                u = UsersMeta.query.filter_by(uid=rg.uid).first()
                 rides_list.append({
                 'rid' : rm.rid,
                 'source' : rm.src,
@@ -336,20 +377,71 @@ def book():
             s = RidesBooked(uid=x['userId'], rid=int(x['rid']))
             db.session.add(s)
             db.session.commit()
-            return jsonify({'ride' : 'booked'})
+            return jsonify({'ride' : 'booking-success'})
         else:
             return jsonify({'ride' : 'booking-failed'})
+
+@app.route('/requestbook', methods = ['POST'])
+def reqbook():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            s = RequestRide(uid=x['userId'], rid=int(x['rid']))
+            db.session.add(s)
+            db.session.commit()
+
+            s = Notifications(uid=RM, xid=int(x['userId']), type=1, rid=int(x['rid']), status = 0)
+
+            return jsonify({'ride' : 'booking-request-success'})
+        else:
+            return jsonify({'ride' : 'booking-request-failed'})
+
+@app.route('/confirmbook', methods = ['POST'])
+def reqbook():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+
+            s = RidesBooked(uid=x['userId'], rid=int(x['rid']))
+            db.session.add(s)
+            db.session.commit()
+
+            RequestRide.query.filter_by(uid=x['userId'], rid=int(x['rid'])).delete()
+            db.session.commit()
+
+            rm =  RidesMeta.query.filter_by(rid=x.rid).first()
+            rm.seats = rm.seats - int(x['seats'])
+
+            nn = Notifications(uid = int(x['cid']), type = 2, xid = int(x['userId']), rid = int(x['rid']), readstatus = 0)
+            db.session.add(nm)
+            db.session.commit()
+
+            return jsonify({'ride' : 'booking-request-success'})
+        else:
+            return jsonify({'ride' : 'booking-request-failed'})
+
 
 @app.route('/unbook', methods = ['POST'])
 def unbook():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
             x = request.get_json()
-            RidesBooked.query.filter_by(uid=x['userId'], rid=int(x['rid'])).delete()
+            RidesBooked.query.filter_by(uid=int(x['userId']), rid=int(x['rid'])).delete()
             db.session.commit()
             return jsonify({'ride' : 'cancelled'})
         else:
             return jsonify({'ride' : 'booking-cancellation-failed'})
+
+@app.route('/notificationcount', methods = ['POST'])
+def ncount():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            res = Notifications.query.filter_by(uid=int(x['userId']), status = 0)
+            if res:
+                return jsonify({'count': len(res)})
+            else:
+                return jsonify({'count': 0})
 
 
 if __name__ == '__main__':
