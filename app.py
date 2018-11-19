@@ -111,7 +111,7 @@ def notify():
                     'rid' : r.rid,
                     'readstatus' : r.status,
                 })
-            return jsonify('status': notify_list)
+            return jsonify({'status': notify_list})
     else:
         return jsonify({'status':'profile-failed'})
 
