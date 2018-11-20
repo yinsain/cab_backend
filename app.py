@@ -436,6 +436,33 @@ def reqbook():
         else:
             return jsonify({'ride' : 'booking-request-failed'})
 
+@app.route('/getrequests', methods = ['POST'])
+def getreqbook():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            all_reqs = list()
+            res = RidesGiven.query.filter_by(uid=int(x['userId'])).all()
+            for a in res:
+                rq = RequestRide.query.filter_by(rid=a.rid).all()
+                ride_req_list = list()
+                for x in rq:
+                    ride_req_list.append(x.uid)
+                rm =  RidesMeta.query.filter_by(rid=x.rid).first()
+                all_reqs.append({
+                'rid' : rm.rid,
+                'source' : rm.src,
+                'dest' : rm.dest,
+                'date' : rm.rdate,
+                'seats' : rm.seats,
+                'price' : rm.price,
+                'hour' : rm.hour,
+                'requesters' : ride_req_list
+                })
+            return jsonify({ 'requests' : all_reqs })
+        else:
+            return jsonify({'requests' : 'no-requests'})
+
 @app.route('/confirmbook', methods = ['POST'])
 def cnfbook():
     if request.method == 'POST':
