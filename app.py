@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, session, flash, redirect, url_for, ma
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 from otputils import otp_send
+from sqlalchemy.schema import UniqueConstraint
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -83,6 +84,8 @@ class Notifications(db.Model):
     xid = db.Column(db.Integer, nullable=False)
     rid = db.Column(db.Integer, nullable=False)
     status = db.Column(db.Integer, nullable=False)
+    __table_args__ = (UniqueConstraint('uid', 'xid','rid'),
+                     )
 
     def __repr__(self):
         return f"Notifications('{self.idx}', '{self.uid}', '{self.type}', '{self.rid}', '{self.status}')"
@@ -91,9 +94,11 @@ class RequestRide(db.Model):
     idx = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     uid = db.Column(db.Integer, nullable=False)
     rid = db.Column(db.Integer, nullable=False)
-
+    xid = db.Column(db.Integer, nullable=False)
+    __table_args__ = (UniqueConstraint('uid','rid'),
+                     )
     def __repr__(self):
-        return f"RequestRide('{self.idx}', '{self.uid}', '{self.rid}')"
+        return f"RequestRide('{self.idx}', '{self.uid}', '{self.rid}','{self.xid}')"
 
 @app.route('/bnotify', methods = ['POST'])
 def notify():
@@ -267,6 +272,7 @@ def find_ride():
                 'seats' : rm.seats,
                 'price' : rm.price,
                 'hour' : rm.hour,
+                'id': u.uid,
                 'name' : u.name,
                 'mail' : u.email
                 })
@@ -299,6 +305,37 @@ def offered_ride():
                 'name' : u.name,
                 'phone' : u.phone,
                 'mail' : u.email
+                })
+            return jsonify({'rides' : rides_list})
+        else:
+            return jsonify({'rides' : 'no-rides'})
+
+@app.route('/requested', methods = ['POST'])
+def requested_ride():
+    if request.method == 'POST':
+        if 'application/json' in request.headers['Content-type']:
+            x = request.get_json()
+            res = RequestRide.query.filter_by(xid=int(x['userId']))
+            res_name = UsersMeta.query.filter_by(email=x['userMail']).first()
+            rides_list = list()
+            for x in res:
+                print('TESTING===', x.rid)
+                rm =  RidesMeta.query.filter_by(rid=x.rid).first()
+                # rg = Notifications.query.filter_by(rid=x.id).first()
+                u = UsersMeta.query.filter_by(uid=x.uid).first()
+                rides_list.append({
+                'rid' : rm.rid,
+                'source' : rm.src,
+                'dest' : rm.dest,
+                'date' : rm.rdate,
+                'seats' : rm.seats,
+                'price' : rm.price,
+                'hour' : rm.hour,
+                'name': res_name.name,
+                'name' : u.name,
+                'phone' : u.phone,
+                'mail' : u.email,
+                'cid' : u.uid
                 })
             return jsonify({'rides' : rides_list})
         else:
@@ -386,12 +423,15 @@ def reqbook():
     if request.method == 'POST':
         if 'application/json' in request.headers['Content-type']:
             x = request.get_json()
-            s = RequestRide(uid=x['userId'], rid=int(x['rid']))
+            s = RequestRide(uid=x['userId'], rid=int(x['rid']),xid=int(x['did']))
             db.session.add(s)
             db.session.commit()
 
-            s = Notifications(uid=RM, xid=int(x['userId']), type=1, rid=int(x['rid']), status = 0)
-
+            s = Notifications(uid=int(x['did']), xid=int(x['userId']), type=1, rid=int(x['rid']), status = 0)
+        
+            db.session.add(s)
+            db.session.commit()
+            
             return jsonify({'ride' : 'booking-request-success'})
         else:
             return jsonify({'ride' : 'booking-request-failed'})
@@ -402,18 +442,18 @@ def cnfbook():
         if 'application/json' in request.headers['Content-type']:
             x = request.get_json()
 
-            s = RidesBooked(uid=x['userId'], rid=int(x['rid']))
+            s = RidesBooked(uid=x['cid'], rid=int(x['rid']))
             db.session.add(s)
             db.session.commit()
 
-            RequestRide.query.filter_by(uid=x['userId'], rid=int(x['rid'])).delete()
+            RequestRide.query.filter_by(uid=x['cid'], rid=int(x['rid'])).delete()
             db.session.commit()
 
-            rm =  RidesMeta.query.filter_by(rid=x.rid).first()
+            rm =  RidesMeta.query.filter_by(rid=int(x['rid'])).first()
             rm.seats = rm.seats - int(x['seats'])
 
             nn = Notifications(uid = int(x['cid']), type = 2, xid = int(x['userId']), rid = int(x['rid']), readstatus = 0)
-            db.session.add(nm)
+            db.session.add(nn)
             db.session.commit()
 
             return jsonify({'ride' : 'booking-request-success'})
