@@ -80,7 +80,7 @@ class Subscriptions(db.Model):
 class Notifications(db.Model):
     idx = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     uid = db.Column(db.Integer, nullable=False)
-    ntype = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.Integer, nullable=False)
     xid = db.Column(db.Integer, nullable=False)
     rid = db.Column(db.Integer, nullable=False)
     status = db.Column(db.Integer, nullable=False)
@@ -88,7 +88,7 @@ class Notifications(db.Model):
                      )
 
     def __repr__(self):
-        return f"Notifications('{self.idx}', '{self.uid}', '{self.ntype}', '{self.rid}', '{self.status}')"
+        return f"Notifications('{self.idx}', '{self.uid}', '{self.type}', '{self.rid}', '{self.status}')"
 
 class RequestRide(db.Model):
     idx = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
@@ -113,7 +113,7 @@ def notify():
                 rm = RidesMeta.query.filter_by(rid=r.rid).first()
                 notify_list.append({
                     'userId': r.uid,
-                    'type' : r.ntype,
+                    'type' : r.type,
                     'xid' : r.xid,
                     'xname': um.name,
                     'source': rm.src,
@@ -484,7 +484,7 @@ def cnfbook():
             rm =  RidesMeta.query.filter_by(rid=int(x['rid'])).first()
             rm.seats = rm.seats - int(x['seats'])
 
-            nn = Notifications(uid = int(x['cid']), type = 2, xid = int(x['userId']), rid = int(x['rid']), readstatus = 0)
+            nn = Notifications(uid = int(x['cid']), type = 2, xid = int(x['userId']), rid = int(x['rid']), status = 0)
             db.session.add(nn)
             db.session.commit()
 
