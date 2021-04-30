@@ -22,7 +22,7 @@ PyJWT==1.6.4
 PySocks==1.6.8
 pytz==2018.7
 requests==2.20.1
-rsa==4.0
+rsa==4.7
 six==1.11.0
 SQLAlchemy==1.2.14
 twilio==6.19.2
